@@ -59,8 +59,20 @@
         .nav-item.active { color: #818cf8; }
         
         /* Ajuste crucial para evitar corte de conteúdo */
-        #app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
-        #main-content { flex: 1; overflow-y: auto; padding-bottom: 110px; } /* Espaço extra para o menu inferior */
+        /* Garante que a tela inteira ocupe exatamente a altura visível e contenha os elementos */
+        #app-container { 
+            height: 100vh; 
+            height: 100dvh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
+        }
+        /* Força a área de conteúdo a ocupar o espaço restante e rolar de forma isolada */
+        #main-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding-bottom: 110px; 
+        }
     </style>
 </head>
 <body>
