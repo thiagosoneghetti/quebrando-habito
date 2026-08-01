@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quantum Mind - Quebrando o Hábito</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="icon-192.png">
+  
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        quantum: { 900: '#0f172a', 800: '#1e293b', 700: '#334155', accent: '#6366f1', glow: '#8b5cf6' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #8b5cf6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .nav-item.active { color: #818cf8; }
+        
+        /* Ajuste crucial para evitar corte de conteúdo */
+        #app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+        #main-content { flex: 1; overflow-y: auto; padding-bottom: 110px; } /* Espaço extra para o menu inferior */
+    </style>
+</head>
+<body>
+
+    <div id="app-container" class="max-w-md mx-auto bg-quantum-900 relative shadow-2xl overflow-hidden">
+        
+        <header class="p-5 glass-panel sticky top-0 z-20 flex justify-between items-center rounded-b-2xl">
+            <div>
+                <h1 class="text-xl font-bold gradient-text">Quantum Mind</h1>
+                <p class="text-xs text-slate-400" id="header-subtitle">Quebrando o Hábito de Ser Você</p>
+            </div>
+            <button onclick="navigate('settings')" class="text-slate-400 hover:text-white transition">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
+        </header>
+
+        <main id="main-content" class="p-5 space-y-6">
+            
+            <!-- View: Dashboard (Home) -->
+            <section id="view-home" class="view-section">
+                <div class="glass-panel p-5 rounded-2xl mb-6 border border-white/5 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+                    <h2 class="text-lg font-semibold mb-2">Seu Progresso</h2>
+                    <div class="flex justify-between text-sm text-slate-300 mb-2">
+                        <span id="current-week-display" class="font-medium text-indigo-300">Dia 0 de 28</span>
+                        <span id="progress-percent" class="font-bold">0%</span>
+                    </div>
+                    <div class="w-full bg-quantum-700 rounded-full h-3 mb-1">
+                        <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-700 relative" style="width: 0%">
+                            <div class="absolute right-0 top-0 bottom-0 w-4 bg-white/20 rounded-full blur-[2px]"></div>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">Prática de 4 semanas. Cada dia de atividade conta.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <button onclick="navigate('learn')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-3 active:scale-95 transition">
+                        <div class="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                            <i class="fas fa-book-open text-xl"></i>
+                        </div>
+                        <span class="font-medium text-sm">Conceitos</span>
+                    </button>
+                    <button onclick="navigate('practice')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-3 active:scale-95 transition border border-purple-500/30 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+                        <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                            <i class="fas fa-atom text-xl"></i>
+                        </div>
+                        <span class="font-medium text-sm">Prática Diária</span>
+                    </button>
+                    <button onclick="navigate('ai')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-3 active:scale-95 transition">
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                            <i class="fas fa-brain text-xl"></i>
+                        </div>
+                        <span class="font-medium text-sm">IA Mentora</span>
+                    </button>
+                    <button onclick="navigate('reminders')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-3 active:scale-95 transition">
+                        <div class="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400">
+                            <i class="fas fa-bell text-xl"></i>
+                        </div>
+                        <span class="font-medium text-sm">Lembretes</span>
+                    </button>
+                </div>
+                
+                <button onclick="navigate('history')" class="w-full glass-panel p-4 rounded-2xl flex items-center justify-between active:scale-95 transition mb-6 border border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.1)]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400">
+                            <i class="fas fa-history text-lg"></i>
+                        </div>
+                        <span class="font-medium text-orange-100">Ver Histórico de Progresso</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-slate-500"></i>
+                </button>
+            </section>
+
+            <section id="view-learn" class="view-section hidden space-y-4">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold gradient-text">Guia de Conceitos</h2>
+                    <p class="text-xs text-slate-400">A Jornada Neurológica de Pensar para Ser</p>
+                </div>
+
+                <div class="glass-panel p-4 rounded-xl text-sm text-slate-300 italic border-l-2 border-indigo-500 mb-4">
+                    "Bem-vindo à fronteira da sua própria evolução. Como seu mentor nesta travessia, meu papel é traduzir a complexidade da neurobiologia em uma arquitetura prática para o seu novo eu. Para mudar sua vida, você deve primeiro entender que o maior hábito que você precisa quebrar é, precisamente, o hábito de ser você mesmo."
+                </div>
+                
+                <!-- Acordeões do Conteúdo -->
+                <div class="space-y-3">
+                    <div class="glass-panel rounded-xl overflow-hidden">
+                        <button class="w-full p-4 flex justify-between items-center text-left font-semibold text-indigo-300 focus:outline-none" onclick="toggleAccordion('acc-1')">
+                            1. O Vício de Ser Você Mesmo
+                            <i class="fas fa-chevron-down text-sm transition-transform" id="icon-acc-1"></i>
+                        </button>
+                        <div id="acc-1" class="hidden p-4 pt-0 text-sm text-slate-300 space-y-3 border-t border-white/5">
+                            <p>A premissa central é que nos tornamos viciados em nossa própria identidade em um nível celular. Através da repetição de pensamentos e sentimentos familiares, condicionamos o corpo a exigir as mesmas doses químicas (culpa, medo, ansiedade) para se sentir "em casa".</p>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>Mudança pela Dor:</strong> Esperar por uma crise para mudar. Ocorre quando a dor de ser o mesmo supera o medo do desconhecido.</li>
+                                <li><strong>Mudança pela Inspiração:</strong> Escolher evoluir abrindo mão do "conhecido" e aceitando o desconforto de podar velhas sinapses.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl overflow-hidden">
+                        <button class="w-full p-4 flex justify-between items-center text-left font-semibold text-purple-300 focus:outline-none" onclick="toggleAccordion('acc-2')">
+                            2. O Você Quântico
+                            <i class="fas fa-chevron-down text-sm transition-transform" id="icon-acc-2"></i>
+                        </button>
+                        <div id="acc-2" class="hidden p-4 pt-0 text-sm text-slate-300 space-y-4 border-t border-white/5">
+                            <p>A realidade é um campo de energia. O foco sai da matéria física (0,00001%) para o puro potencial (99,99999%).</p>
+                            
+                            <div class="overflow-x-auto rounded-lg border border-white/10">
+                                <table class="w-full text-xs text-left whitespace-nowrap">
+                                    <thead class="bg-white/5">
+                                        <tr><th class="p-2">Dimensão</th><th class="p-2">Newtoniano (Causa/Efeito)</th><th class="p-2">Quântico (Causar um Efeito)</th></tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-white/5">
+                                        <tr><td class="p-2 font-semibold">Foco</td><td class="p-2">Matéria (o visível)</td><td class="p-2 text-purple-300">Energia (o invisível)</td></tr>
+                                        <tr><td class="p-2 font-semibold">Perspectiva</td><td class="p-2">Vítima das circunstâncias</td><td class="p-2 text-purple-300">Criador da realidade</td></tr>
+                                        <tr><td class="p-2 font-semibold">Tempo</td><td class="p-2">Linear e previsível</td><td class="p-2 text-purple-300">Multidimensional</td></tr>
+                                        <tr><td class="p-2 font-semibold">Identidade</td><td class="p-2">Refém do ambiente</td><td class="p-2 text-purple-300">Arquiteto do destino</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="bg-purple-900/30 p-3 rounded-lg border border-purple-500/20">
+                                <span class="font-bold text-purple-300">Fórmula de Cocriação:</span><br>
+                                [Sinal Elétrico (Intenção)] + [Carga Magnética (Emoção Elevada)] = Assinatura Eletromagnética
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl overflow-hidden">
+                        <button class="w-full p-4 flex justify-between items-center text-left font-semibold text-teal-300 focus:outline-none" onclick="toggleAccordion('acc-3')">
+                            3. Superando os "Três Grandes"
+                            <i class="fas fa-chevron-down text-sm transition-transform" id="icon-acc-3"></i>
+                        </button>
+                        <div id="acc-3" class="hidden p-4 pt-0 text-sm text-slate-300 space-y-3 border-t border-white/5">
+                            <p>As âncoras que prendem sua consciência ao passado:</p>
+                            <ul class="space-y-2">
+                                <li>🌍 <strong>O Ambiente:</strong> Reagir aos mesmos estímulos faz o ambiente controlar sua mente.</li>
+                                <li>🧍‍♂️ <strong>O Corpo:</strong> O corpo memoriza emoções (95% subconsciente) e se torna viciado quimicamente no estresse.</li>
+                                <li>⏳ <strong>O Tempo:</strong> Viver no futuro previsível ou passado familiar limita você. A criação exige estar no "presente generoso".</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl overflow-hidden">
+                        <button class="w-full p-4 flex justify-between items-center text-left font-semibold text-orange-300 focus:outline-none" onclick="toggleAccordion('acc-4')">
+                            4. A Neuroquímica do Hábito
+                            <i class="fas fa-chevron-down text-sm transition-transform" id="icon-acc-4"></i>
+                        </button>
+                        <div id="acc-4" class="hidden p-4 pt-0 text-sm text-slate-300 space-y-3 border-t border-white/5">
+                            <p><strong>Lei de Hebb:</strong> "Células nervosas que disparam juntas, conectam-se".</p>
+                            <p class="font-semibold text-white">O Loop de Servidão:</p>
+                            <ol class="list-decimal pl-5 space-y-1">
+                                <li>Pensamento dispara.</li>
+                                <li>Cérebro envia sinal químico.</li>
+                                <li>Corpo sente a emoção.</li>
+                                <li>Cérebro reforça o pensamento.</li>
+                            </ol>
+                            <p class="text-xs text-orange-200 mt-2 p-2 bg-orange-900/20 rounded">Neurotransmissores criam a mente, neuropeptídeos fazem a ponte, hormônios alteram a fisiologia do corpo.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl overflow-hidden">
+                        <button class="w-full p-4 flex justify-between items-center text-left font-semibold text-blue-300 focus:outline-none" onclick="toggleAccordion('acc-5')">
+                            5. Os Três Cérebros
+                            <i class="fas fa-chevron-down text-sm transition-transform" id="icon-acc-5"></i>
+                        </button>
+                        <div id="acc-5" class="hidden p-4 pt-0 text-sm text-slate-300 space-y-3 border-t border-white/5">
+                            <div class="overflow-x-auto rounded-lg border border-white/10">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="bg-white/5"><tr><th class="p-2">Cérebro</th><th class="p-2">Estado</th><th class="p-2">Função</th></tr></thead>
+                                    <tbody class="divide-y divide-white/5">
+                                        <tr><td class="p-2 font-bold text-blue-300">Neocórtex</td><td class="p-2">Pensar</td><td class="p-2">Aprender filosofia.</td></tr>
+                                        <tr><td class="p-2 font-bold text-blue-300">Sistema Límbico</td><td class="p-2">Fazer</td><td class="p-2">Gerar experiência prática/química.</td></tr>
+                                        <tr><td class="p-2 font-bold text-blue-300">Cerebelo</td><td class="p-2">Ser</td><td class="p-2">Tornar automático (segunda natureza).</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-practice" class="view-section hidden flex flex-col h-full">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold gradient-text">Prática Diária</h2>
+                    <select id="week-selector" class="bg-quantum-800 text-sm p-2 rounded-lg border border-white/10 text-white focus:outline-none" onchange="changeWeek(this.value)">
+                        <option value="1">Semana 1: Indução</option>
+                        <option value="2">Semana 2: Desconstrução</option>
+                        <option value="3">Semana 3: Desmantelamento</option>
+                        <option value="4">Semana 4: Criação</option>
+                    </select>
+                </div>
+
+                <!-- Conteúdo Dinâmico da Semana -->
+                <div id="practice-content" class="flex-1 space-y-4">
+                    <!-- Preenchido via JS -->
+                </div>
+            </section>
+
+            <section id="view-ai" class="view-section hidden flex flex-col h-full">
+                <h2 class="text-2xl font-bold gradient-text mb-2">Mentoria IA</h2>
+                <p class="text-xs text-slate-400 mb-4">Análise quântica de padrões e crenças.</p>
+                
+                <div id="chat-history" class="flex-1 overflow-y-auto space-y-4 mb-4 p-2 custom-scrollbar min-h-[300px]">
+                    <div class="bg-quantum-800 p-3 rounded-2xl rounded-tl-none self-start max-w-[85%] text-sm">
+                        Olá! Sou sua IA baseada nos ensinamentos de Dispenza. Me conte um pensamento automático ou emoção recorrente que deseja quebrar.
+                    </div>
+                </div>
+
+                <div class="mt-auto shrink-0">
+                    <div class="flex gap-2 overflow-x-auto pb-2 mb-2 no-scrollbar">
+                        <button onclick="setChatInput('Sinto ansiedade ao acordar sem motivo aparente.')" class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-xs whitespace-nowrap active:bg-white/10">Ansiedade matinal</button>
+                        <button onclick="setChatInput('Como aplicar o ensaio mental corretamente?')" class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-xs whitespace-nowrap active:bg-white/10">Ensaio Mental</button>
+                        <button onclick="setChatInput('O que significa o protesto do corpo?')" class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-xs whitespace-nowrap active:bg-white/10">Protesto do corpo</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="ai-input" class="w-full bg-quantum-800 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-purple-500" placeholder="Descreva sua dúvida...">
+                        <button onclick="sendChatMessage()" class="bg-gradient-to-r from-indigo-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center active:scale-95 transition shrink-0">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-reminders" class="view-section hidden space-y-5">
+                <div>
+                    <h2 class="text-2xl font-bold gradient-text mb-1">Lembretes</h2>
+                    <p class="text-xs text-slate-400">Pausas de Consciência: Configure avisos para se perguntar "Quem eu estou sendo agora?".</p>
+                </div>
+
+                <button onclick="requestNotificationPermission()" id="btn-notify-perm" class="w-full bg-blue-500/20 text-blue-300 border border-blue-500/30 p-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hidden">
+                    <i class="fas fa-bell"></i> Habilitar Notificações
+                </button>
+
+                <div class="glass-panel p-4 rounded-xl flex flex-col gap-3">
+                    <h3 class="font-semibold text-sm">Adicionar Novo Lembrete</h3>
+                    
+                    <label class="text-xs text-slate-400">Horário (24h)</label>
+                    <input type="time" id="reminder-time" class="bg-quantum-800 border border-white/10 rounded-lg p-3 text-sm focus:outline-none w-full text-white">
+                    
+                    <label class="text-xs text-slate-400">Mensagem</label>
+                    <select id="reminder-msg" class="bg-quantum-800 border border-white/10 rounded-lg p-3 text-sm focus:outline-none w-full text-white">
+                        <option value="Praticar Indução (Sair de Beta)">Praticar Indução (Sair de Beta)</option>
+                        <option value="Pausa: Quem eu estou sendo agora?">Pausa: Quem eu estou sendo agora?</option>
+                        <option value="Assinatura Eletromagnética: Qual é o seu estado?">Checar Assinatura Eletromagnética</option>
+                        <option value="Ensaio Mental: O Novo Eu">Ensaio Mental (Novo Eu)</option>
+                    </select>
+                    
+                    <button onclick="addReminder()" class="bg-indigo-500 hover:bg-indigo-600 w-full p-3 rounded-lg font-semibold mt-2 transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i> Salvar Lembrete
+                    </button>
+                </div>
+
+                <div id="reminders-list" class="space-y-2 mt-4">
+                    <!-- Lista populada via JS -->
+                </div>
+            </section>
+
+            <section id="view-history" class="view-section hidden flex flex-col h-full">
+                <div class="flex justify-between items-center mb-4 shrink-0">
+                    <h2 class="text-2xl font-bold gradient-text">Seu Histórico</h2>
+                    <button onclick="navigate('home')" class="text-sm text-slate-400 flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg active:bg-white/10"><i class="fas fa-arrow-left"></i> Voltar</button>
+                </div>
+                <div id="history-list" class="flex-1 space-y-3 overflow-y-auto pb-4 custom-scrollbar pr-2 min-h-[300px]">
+                    <!-- Preenchido via JS -->
+                </div>
+            </section>
+
+            <section id="view-settings" class="view-section hidden space-y-5">
+                <h2 class="text-2xl font-bold gradient-text mb-4">Configurações</h2>
+                
+                <div class="glass-panel p-5 rounded-xl space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Chave da API Gemini (Opcional)</label>
+                        <p class="text-xs text-slate-400 mb-2">Para usar a IA no GitHub Pages, você precisa de uma chave gratuita do Google AI Studio.</p>
+                        <input type="password" id="api-key-input" class="w-full bg-quantum-800 border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500" placeholder="AIzaSy...">
+                    </div>
+                    <button onclick="saveSettings()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 rounded-lg transition active:scale-95">
+                        Salvar Configurações
+                    </button>
+                </div>
+
+                <div class="glass-panel p-5 rounded-xl border border-red-500/20">
+                    <h3 class="font-semibold text-red-400 mb-2 text-sm">Zona de Perigo</h3>
+                    <button onclick="resetApp()" class="w-full bg-red-500/20 text-red-300 border border-red-500/30 py-2 rounded-lg text-sm active:bg-red-500/40 transition">
+                        Resetar Todo o Progresso
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <nav class="glass-panel border-t border-white/10 flex justify-around p-3 pb-6 absolute bottom-0 w-full z-20">
+            <button onclick="navigate('home')" id="nav-home" class="nav-item active flex flex-col items-center gap-1 text-slate-400 w-16">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-[10px]">Início</span>
+            </button>
+            <button onclick="navigate('practice')" id="nav-practice" class="nav-item flex flex-col items-center gap-1 text-slate-400 w-16">
+                <i class="fas fa-atom text-lg"></i>
+                <span class="text-[10px]">Prática</span>
+            </button>
+            <button onclick="navigate('ai')" id="nav-ai" class="nav-item flex flex-col items-center gap-1 text-slate-400 w-16 relative">
+                <div class="absolute -top-4 bg-gradient-to-r from-indigo-500 to-purple-500 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.5)] border-4 border-quantum-900">
+                    <i class="fas fa-brain text-xl"></i>
+                </div>
+                <span class="text-[10px] mt-7">IA</span>
+            </button>
+            <button onclick="navigate('learn')" id="nav-learn" class="nav-item flex flex-col items-center gap-1 text-slate-400 w-16">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-[10px]">Aprender</span>
+            </button>
+            <button onclick="navigate('reminders')" id="nav-reminders" class="nav-item flex flex-col items-center gap-1 text-slate-400 w-16">
+                <i class="fas fa-bell text-lg"></i>
+                <span class="text-[10px]">Avisos</span>
+            </button>
+        </nav>
+
+        <!-- Global Modal Container -->
+        <div id="modal-container" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+            <div id="modal-content" class="bg-quantum-800 border border-white/10 rounded-2xl p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 shadow-2xl">
+                <h3 id="modal-title" class="text-lg font-bold mb-2">Título</h3>
+                <p id="modal-body" class="text-sm text-slate-300 mb-6">Mensagem</p>
+                <div class="flex justify-end gap-3" id="modal-actions">
+                    <button onclick="closeModal()" class="bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold shadow-lg">OK</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- State Management ---
+        const defaultState = {
+            currentWeek: 1,
+            practicedDays: [], // Track unique dates of activity
+            exercises: {
+                w2_emotion: "", w2_admit: "", w2_surrender: "",
+                w3_observe: "", w4_rehearse: ""
+            },
+            changeCount: 0,
+            reminders: [],
+            history: []
+        };
+        
+        let appState = JSON.parse(localStorage.getItem('dispenzaState')) || defaultState;
+        
+        // Migrations
+        if (!appState.history) appState.history = [];
+        if (!appState.practicedDays) appState.practicedDays = [];
+        if (!appState.exercises) {
+            appState.exercises = {
+                w2_emotion: "", w2_admit: "", w2_surrender: "", w3_observe: "", w4_rehearse: ""
+            };
+        }
+
+        let apiKey = localStorage.getItem('dispenzaApiKey') || ""; 
+
+        function saveState() {
+            localStorage.setItem('dispenzaState', JSON.stringify(appState));
+            updateDashboard();
+        }
+
+        // --- Core UI Navigation ---
+        function navigate(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-indigo-400'));
+            const navBtn = document.getElementById(`nav-${viewId}`);
+            if(navBtn) {
+                navBtn.classList.add('active');
+                navBtn.classList.remove('text-slate-400');
+            }
+
+            if(viewId === 'practice') {
+                renderPracticeContent(appState.currentWeek);
+                document.getElementById('week-selector').value = appState.currentWeek;
+            } else if (viewId === 'history') {
+                renderHistory();
+            }
+            
+            // Scroll para o topo, exceto no chat
+            if(viewId !== 'ai') document.getElementById('main-content').scrollTop = 0;
+        }
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`icon-${id}`);
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // --- Custom Modal ---
+        function showModal(title, body, type = 'info', onConfirm = null) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-body').innerText = body;
+            const actions = document.getElementById('modal-actions');
+            
+            if(type === 'confirm') {
+                actions.innerHTML = `
+                    <button onclick="closeModal()" class="bg-white/10 px-4 py-2 rounded-lg text-sm font-semibold">Cancelar</button>
+                    <button id="modal-confirm-btn" class="bg-red-500 px-4 py-2 rounded-lg text-sm font-semibold">Confirmar</button>
+                `;
+                document.getElementById('modal-confirm-btn').onclick = () => { onConfirm(); closeModal(); };
+            } else {
+                actions.innerHTML = `<button onclick="closeModal()" class="bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold">OK</button>`;
+            }
+
+            const modal = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('modal-content').classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal-container');
+            modal.classList.add('opacity-0');
+            document.getElementById('modal-content').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function getWeekContent(week) {
+            const ex = appState.exercises;
+            
+            // Funções auxiliares para feedback visual dos botões
+            const getBtnState = (fieldId, defaultText) => {
+                if (ex[fieldId] && ex[fieldId].trim() !== "") {
+                    return `class="bg-green-500/20 text-green-400 border border-green-500/50 w-full py-3 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2" innerHTML='<i class="fas fa-check"></i> Salvo'`;
+                }
+                return `class="bg-indigo-500 hover:bg-indigo-600 border border-indigo-500/50 w-full py-3 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg" innerHTML='${defaultText}'`;
+            };
+
+            const content = {
+                1: {
+                    title: "Semana 1: Acesso ao Subconsciente",
+                    desc: "Passo 1: Indução. O objetivo é baixar as ondas cerebrais, focando no espaço para inibir a mente analítica.",
+                    actionHTML: `
+                        <div class="glass-panel p-6 rounded-xl text-center space-y-4 shadow-lg border border-white/5">
+                            <div class="w-20 h-20 mx-auto bg-purple-500/10 rounded-full flex items-center justify-center border-2 border-purple-500/30">
+                                <i class="fas fa-om text-4xl text-purple-400"></i>
+                            </div>
+                            <p class="text-sm text-slate-300">Foque no espaço que diferentes partes do seu corpo ocupam no espaço. Sinta, não pense.</p>
+                            <button onclick="startInductionTimer(this)" class="bg-gradient-to-r from-indigo-500 to-purple-600 w-full py-3 rounded-lg font-bold shadow-lg active:scale-95 transition mt-4">
+                                <i class="fas fa-play mr-2"></i> Iniciar Prática (10 min)
+                            </button>
+                            <div id="induction-timer" class="text-4xl font-mono text-purple-300 hidden font-bold tracking-wider py-4">10:00</div>
+                        </div>`
+                },
+                2: {
+                    title: "Semana 2: Desconstrução",
+                    desc: "Passos 2 a 4: Rompa o vínculo emocional e entregue-se ao Campo Quântico.",
+                    actionHTML: `
+                        <!-- Passo 2 -->
+                        <div class="glass-panel p-5 rounded-xl space-y-3 mb-5 border border-white/5">
+                            <label class="text-sm font-bold text-purple-300 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs">2</div> Reconhecer</label>
+                            <p class="text-xs text-slate-400">Qual emoção negativa tem definido sua identidade?</p>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <button onclick="document.getElementById('w2_emotion').value = 'Ansiedade'" class="bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-xs active:bg-white/20 transition">Ansiedade</button>
+                                <button onclick="document.getElementById('w2_emotion').value = 'Culpa'" class="bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-xs active:bg-white/20 transition">Culpa</button>
+                                <button onclick="document.getElementById('w2_emotion').value = 'Insegurança'" class="bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-xs active:bg-white/20 transition">Insegurança</button>
+                            </div>
+                            <input type="text" id="w2_emotion" class="w-full bg-quantum-900 border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-purple-500" placeholder="Sua emoção viciante..." value="${ex.w2_emotion}">
+                            <button id="btn_w2_emotion" onclick="saveExercise('w2_emotion', 'Passo 2: Reconhecer', document.getElementById('w2_emotion').value, this)" ${getBtnState('w2_emotion', 'Salvar Passo 2').replace('innerHTML=', '>')}</button>
+                        </div>
+                        
+                        <!-- Passo 3 -->
+                        <div class="glass-panel p-5 rounded-xl space-y-3 mb-5 border border-white/5">
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-bold text-indigo-300 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs">3</div> Admitir</label>
+                                <button onclick="analyzeJournalAI()" class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded border border-indigo-500/30 flex items-center gap-1"><i class="fas fa-magic"></i> IA Analisar</button>
+                            </div>
+                            <p class="text-xs text-slate-400">Externalize à Inteligência Universal as máscaras que você tem usado.</p>
+                            <textarea id="w2_admit" class="w-full bg-quantum-900 border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500 h-24" placeholder="Eu admito que tenho sido refém de...">${ex.w2_admit}</textarea>
+                            <button id="btn_w2_admit" onclick="saveExercise('w2_admit', 'Passo 3: Admitir', document.getElementById('w2_admit').value, this)" ${getBtnState('w2_admit', 'Salvar Passo 3').replace('innerHTML=', '>')}</button>
+                        </div>
+
+                        <!-- Passo 4 -->
+                        <div class="glass-panel p-5 rounded-xl space-y-3 border border-white/5">
+                            <label class="text-sm font-bold text-teal-300 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-teal-500/20 flex items-center justify-center text-xs">4</div> Entregar</label>
+                            <p class="text-xs text-slate-400">O que você está soltando para o Campo Quântico resolver?</p>
+                            <textarea id="w2_surrender" class="w-full bg-quantum-900 border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-teal-500 h-20" placeholder="Inteligência Universal, eu te entrego o controle sobre...">${ex.w2_surrender}</textarea>
+                            <button id="btn_w2_surrender" onclick="saveExercise('w2_surrender', 'Passo 4: Entregar', document.getElementById('w2_surrender').value, this)" ${getBtnState('w2_surrender', 'Salvar Passo 4').replace('innerHTML=', '>')}</button>
+                        </div>`
+                },
+                3: {
+                    title: "Semana 3: Desmantelamento",
+                    desc: "Passos 5 e 6: Vigilância e interrupção do programa antigo (Poda Neural).",
+                    actionHTML: `
+                        <!-- Passo 5 -->
+                        <div class="glass-panel p-5 rounded-xl space-y-3 mb-6 border border-white/5">
+                            <label class="text-sm font-bold text-purple-300 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs">5</div> Observar</label>
+                            <p class="text-xs text-slate-400">Liste pensamentos e ações do "antigo eu" que você não vai permitir hoje.</p>
+                            <textarea id="w3_observe" class="w-full bg-quantum-900 border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-purple-500 h-24" placeholder="Ex: Reclamar, vitimismo, julgar o colega...">${ex.w3_observe}</textarea>
+                            <button id="btn_w3_observe" onclick="saveExercise('w3_observe', 'Passo 5: Observar', document.getElementById('w3_observe').value, this)" ${getBtnState('w3_observe', 'Salvar Observações').replace('innerHTML=', '>')}</button>
+                        </div>
+
+                        <!-- Passo 6 -->
+                        <div class="glass-panel p-6 rounded-xl text-center space-y-4 border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                            <label class="text-sm font-bold text-red-400 flex justify-center items-center gap-2 mb-2"><div class="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center text-xs">6</div> Redirecionar</label>
+                            <p class="text-sm text-slate-300">Flagrou um padrão antigo? Interrompa a rede neural Imediatamente.</p>
+                            <button onclick="registerChange(this)" class="w-36 h-36 rounded-full bg-gradient-to-br from-red-500 to-orange-600 mx-auto flex flex-col items-center justify-center shadow-[0_0_30px_rgba(239,68,68,0.4)] active:scale-90 transition-transform duration-200 border-4 border-red-900 mt-4">
+                                <span class="text-3xl font-black tracking-wider shadow-sm">MUDE!</span>
+                            </button>
+                            <p class="text-xs text-slate-400 mt-4">Interrupções totais (Poda Neural): <span id="change-counter" class="font-bold text-white text-lg ml-1">0</span></p>
+                        </div>`
+                },
+                4: {
+                    title: "Semana 4: Criação",
+                    desc: "Passo 7: Ensaie mentalmente a nova personalidade (Hardware).",
+                    actionHTML: `
+                        <!-- Passo 7 -->
+                        <div class="glass-panel p-5 rounded-xl space-y-3 mb-4 border border-teal-500/30 shadow-[0_0_15px_rgba(20,184,166,0.1)]">
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-bold text-teal-300 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-teal-500/20 flex items-center justify-center text-xs">7</div> Criar e Ensaiar</label>
+                                <button onclick="generateFutureScriptAI()" class="text-xs bg-teal-500/20 text-teal-300 px-2 py-1 rounded border border-teal-500/30 flex items-center gap-1"><i class="fas fa-magic"></i> Gerar c/ IA</button>
+                            </div>
+                            <p class="text-xs text-slate-400">Descreva seu novo eu. Cultive a gratidão antecipada como se já fosse real.</p>
+                            <textarea id="w4_rehearse" class="w-full bg-quantum-900 border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-teal-500 h-40 leading-relaxed" placeholder="Eu sou abundante e calmo. Sinto uma profunda gratidão pois meu corpo já está operando em homeostase...">${ex.w4_rehearse}</textarea>
+                            <button id="btn_w4_rehearse" onclick="saveExercise('w4_rehearse', 'Passo 7: Ensaio Mental', document.getElementById('w4_rehearse').value, this)" ${getBtnState('w4_rehearse', 'Salvar Novo Eu').replace('innerHTML=', '>')}</button>
+                        </div>
+                        
+                        <div class="p-4 bg-teal-900/30 border border-teal-500/20 rounded-xl">
+                            <p class="text-xs text-teal-100 text-center italic">"Quando a sua mente se transforma em um mapa para o futuro, o seu cérebro deixa de ser um registro do passado."</p>
+                        </div>
+                        `
+                }
+            };
+            return content[week];
+        }
+
+        function changeWeek(weekNum) {
+            appState.currentWeek = parseInt(weekNum);
+            saveState();
+            renderPracticeContent(weekNum);
+        }
+
+        function renderPracticeContent(week) {
+            const data = getWeekContent(week);
+            const container = document.getElementById('practice-content');
+            container.innerHTML = `
+                <div class="mb-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                    <h3 class="font-bold text-purple-300 text-lg">${data.title}</h3>
+                    <p class="text-sm text-slate-400 mt-1 leading-snug">${data.desc}</p>
+                </div>
+                ${data.actionHTML}
+            `;
+            
+            if (week == 3) {
+                setTimeout(() => document.getElementById('change-counter').innerText = appState.changeCount || 0, 50);
+            }
+        }
+
+        function trackDayProgress() {
+            const today = new Date().toLocaleDateString('pt-BR');
+            if (!appState.practicedDays) appState.practicedDays = [];
+            
+            if (!appState.practicedDays.includes(today)) {
+                appState.practicedDays.push(today);
+            }
+        }
+
+        function updateDashboard() {
+            const days = appState.practicedDays ? appState.practicedDays.length : 0;
+            const targetDays = 28;
+            
+            document.getElementById('current-week-display').innerText = `Dia ${days} de ${targetDays}`;
+            
+            let pct = Math.min((days / targetDays) * 100, 100).toFixed(0);
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('progress-percent').innerText = `${pct}%`;
+            
+            // Garantir que a semana no seletor seja a mesma do estado atual
+            const selector = document.getElementById('week-selector');
+            if(selector) selector.value = appState.currentWeek;
+        }
+
+        let timerInt;
+        function startInductionTimer(btn) {
+            const display = document.getElementById('induction-timer');
+            btn.classList.add('hidden');
+            display.classList.remove('hidden');
+            let timeLeft = 600; // 10 minutes
+            
+            clearInterval(timerInt);
+            timerInt = setInterval(() => {
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                display.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInt);
+                    showModal('Prática Concluída', 'Indução terminada. O espaço e o corpo foram reconhecidos, abrindo a porta para o subconsciente.');
+                    btn.classList.remove('hidden');
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i> Prática Concluída Hoje';
+                    btn.className = "bg-green-500/20 text-green-400 border border-green-500/50 w-full py-3 rounded-lg font-bold text-sm transition mt-4";
+                    display.classList.add('hidden');
+                    
+                    trackDayProgress();
+                    addToHistory('Passo 1: Indução', 'Concluiu a meditação guiada de indução.');
+                    saveState();
+                }
+            }, 1000);
+        }
+
+        function addToHistory(title, content) {
+            const now = new Date();
+            // Utilizando formato de 24 horas (hour12: false)
+            const dateStr = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit', hour12: false});
+            appState.history.unshift({ date: dateStr, title, content });
+        }
+
+        function saveExercise(fieldId, title, content, btnElement) {
+            if(!content || !content.trim()) return showModal("Aviso", "Por favor, preencha o campo antes de salvar.");
+            
+            appState.exercises[fieldId] = content;
+            trackDayProgress();
+            addToHistory(title, content);
+            saveState();
+            
+            // Feedback Visual no botão (Ficar Verde)
+            if (btnElement) {
+                btnElement.innerHTML = '<i class="fas fa-check"></i> Salvo';
+                btnElement.className = "bg-green-500/20 text-green-400 border border-green-500/50 w-full py-3 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2";
+            }
+            
+            showModal("Progresso Registrado", `Sua etapa "${title}" foi salva no histórico e seu dia de prática foi contabilizado!`);
+        }
+
+        function registerChange(btnElement) {
+            appState.changeCount = (appState.changeCount || 0) + 1;
+            document.getElementById('change-counter').innerText = appState.changeCount;
+            
+            trackDayProgress();
+            addToHistory('Interrupção Neural: MUDE!', 'Você interrompeu ativamente um padrão automático do antigo eu.');
+            saveState();
+            
+            // Feedback vibratório para celular
+            if ('vibrate' in navigator) navigator.vibrate([50, 50, 50]);
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            if(!appState.history || appState.history.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-10 opacity-60">
+                        <i class="fas fa-history text-5xl text-slate-600 mb-4"></i>
+                        <p class="text-sm text-slate-400">Nenhum registro no momento.</p>
+                        <p class="text-xs text-slate-500 mt-2">Suas práticas diárias, admissões, comandos "MUDE!" e ensaios mentais aparecerão aqui formatados com data e hora.</p>
+                    </div>`;
+                return;
+            }
+            
+            appState.history.forEach((item) => {
+                let borderColor = "border-l-indigo-500";
+                let icon = "fa-pen";
+                if(item.title.includes("MUDE")) { borderColor = "border-l-red-500"; icon = "fa-bolt"; }
+                if(item.title.includes("Ensaio") || item.title.includes("Entregar")) { borderColor = "border-l-teal-500"; icon = "fa-brain"; }
+                if(item.title.includes("Indução")) { borderColor = "border-l-purple-500"; icon = "fa-om"; }
+
+                list.innerHTML += `
+                    <div class="glass-panel border-l-4 ${borderColor} p-4 rounded-xl mb-3 shadow-md border-r border-t border-b border-white/5">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <span class="font-bold text-white text-sm flex items-center gap-2"><i class="fas ${icon} text-slate-400"></i> ${item.title}</span>
+                            <span class="text-[10px] text-slate-400 bg-black/40 px-2 py-1 rounded-md shrink-0 border border-white/5 font-mono">${item.date}</span>
+                        </div>
+                        <p class="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">${item.content}</p>
+                    </div>`;
+            });
+        }
+
+        async function callGeminiAPI(prompt, systemContext = "") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: "Você é um assistente especialista no trabalho do Dr. Joe Dispenza, neuroplasticidade e física quântica. " + systemContext }] }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if(!response.ok) throw new Error("Falha na API. Verifique a chave nas Configurações se estiver no GitHub Pages.");
+                const result = await response.json();
+                return result.candidates[0].content.parts[0].text;
+            } catch (err) {
+                console.error(err);
+                return `Aviso: Para usar a Inteligência Artificial no Github Pages, você precisa inserir sua chave de API gratuita do Google AI Studio na aba Configurações. Erro Técnico: ${err.message}`;
+            }
+        }
+
+        async function analyzeJournalAI() {
+            const inputEl = document.getElementById('w2_admit');
+            if(!inputEl) return;
+            const text = inputEl.value;
+            if(!text || !text.trim()) return showModal("Aviso", "Escreva algo no campo 'Admitir' primeiro para a IA analisar.");
+            
+            showModal("Analisando...", "A IA está processando sua declaração em nível neurobiológico...");
+            const prompt = `Analise a seguinte declaração baseada em Joe Dispenza: "${text}". Identifique brevemente qual vício químico ela representa e sugira 1 pensamento de substituição para a 'poda neural'.`;
+            
+            const response = await callGeminiAPI(prompt, "Seja conciso, empático e direto. Formate bem o texto.");
+            closeModal();
+            setTimeout(() => showModal("Análise Quântica", response), 350);
+        }
+
+        async function generateFutureScriptAI() {
+            const inputEl = document.getElementById('w4_rehearse');
+            if(!inputEl) return;
+            const text = inputEl.value || "Quero me curar e atrair abundância financeira.";
+            
+            showModal("Gerando...", "O Campo Quântico (via IA) está arquitetando seu roteiro de ensaio...");
+            const prompt = `Crie um roteiro de ensaio mental (1 parágrafo prático) focado na gratidão antecipada para o objetivo: "${text}". Evite clichês, foque em evocar a emoção (física quântica) como se o evento já tivesse ocorrido.`;
+            
+            const response = await callGeminiAPI(prompt);
+            closeModal();
+            setTimeout(() => {
+                inputEl.value = response;
+                // Salva no estado localmente, mas espera o usuário confirmar clicando em "Salvar" para contar o progresso
+                appState.exercises.w4_rehearse = response;
+                saveState();
+            }, 350);
+        }
+
+        function setChatInput(text) { document.getElementById('ai-input').value = text; }
+        
+        async function sendChatMessage() {
+            const input = document.getElementById('ai-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const chatDiv = document.getElementById('chat-history');
+            
+            // Add user message
+            chatDiv.innerHTML += `<div class="bg-indigo-600 p-3 rounded-2xl rounded-tr-none self-end max-w-[85%] text-sm ml-auto mt-3 shadow-md">${text}</div>`;
+            input.value = '';
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+
+            // Add loader
+            const loaderId = 'loader-' + Date.now();
+            chatDiv.innerHTML += `<div id="${loaderId}" class="bg-quantum-800 p-4 rounded-2xl rounded-tl-none self-start max-w-[85%] mt-3 border border-white/5"><div class="loader"></div></div>`;
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+
+            // Call API
+            const responseText = await callGeminiAPI(text, "Responda de forma direta e transformadora em até 2 parágrafos. Use a mecânica do modelo quântico, poda neural e emoção elevada.");
+            
+            // Replace loader
+            const formatterOutput = responseText.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+            document.getElementById(loaderId).innerHTML = `<div class="text-sm text-slate-200">${formatterOutput}</div>`;
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+
+        function renderReminders() {
+            const list = document.getElementById('reminders-list');
+            list.innerHTML = '';
+            if(appState.reminders.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-6 border border-white/5 rounded-xl border-dashed">
+                        <i class="fas fa-bell-slash text-2xl text-slate-600 mb-2"></i>
+                        <p class="text-sm text-slate-500">Nenhum lembrete configurado.</p>
+                    </div>`;
+                return;
+            }
+            appState.reminders.sort((a,b) => a.time.localeCompare(b.time)).forEach((rem, idx) => {
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-white/5 border border-white/10 p-4 rounded-xl shadow-sm">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-quantum-900 border border-white/10 p-2 rounded-lg font-mono font-bold text-indigo-400 text-lg shadow-inner">
+                                ${rem.time}
+                            </div>
+                            <p class="text-xs text-slate-300 font-medium leading-tight max-w-[180px]">${rem.msg}</p>
+                        </div>
+                        <button onclick="removeReminder(${idx})" class="text-red-400/70 p-3 hover:bg-white/10 hover:text-red-400 rounded-lg transition"><i class="fas fa-trash"></i></button>
+                    </div>`;
+            });
+        }
+
+        function addReminder() {
+            const time = document.getElementById('reminder-time').value; // Formato 24h padronizado pelo input type="time"
+            const msg = document.getElementById('reminder-msg').value;
+            if(!time) return showModal("Atenção", "Por favor, selecione um horário.");
+            
+            appState.reminders.push({ time, msg, lastTriggered: '' });
+            saveState();
+            renderReminders();
+            showModal("Lembrete Adicionado", `Você será avisado às ${time} para: "${msg}"`);
+        }
+
+        function removeReminder(idx) {
+            appState.reminders.splice(idx, 1);
+            saveState();
+            renderReminders();
+        }
+
+        function checkNotificationSupport() {
+            const btn = document.getElementById('btn-notify-perm');
+            if ('Notification' in window) {
+                if (Notification.permission === 'default' || Notification.permission === 'denied') {
+                    btn.classList.remove('hidden');
+                }
+            }
+        }
+
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) return showModal("Aviso", "Seu navegador/dispositivo não suporta notificações nativas.");
+            const perm = await Notification.requestPermission();
+            if (perm === 'granted') {
+                document.getElementById('btn-notify-perm').classList.add('hidden');
+                showModal("Sucesso", "Notificações ativadas! Adicione este site à Tela de Início do seu celular para garantir que os alarmes funcionem em segundo plano.");
+            } else {
+                showModal("Atenção", "As notificações foram bloqueadas. Você pode habilitá-las nas configurações do seu navegador para este site.");
+            }
+        }
+
+        // Notification Loop
+        setInterval(() => {
+            const now = new Date();
+            // Garante 24h exato no formato HH:MM
+            const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const dateString = now.toDateString();
+
+            appState.reminders.forEach(rem => {
+                if (rem.time === timeString && rem.lastTriggered !== dateString) {
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification("Quantum Mind", { body: rem.msg, icon: "https://cdn-icons-png.flaticon.com/512/2873/2873634.png" });
+                    } else {
+                        showModal(`Lembrete das ${rem.time}`, rem.msg);
+                    }
+                    rem.lastTriggered = dateString;
+                    saveState(); 
+                }
+            });
+        }, 30000); // Check every 30s
+
+        function saveSettings() {
+            const key = document.getElementById('api-key-input').value;
+            apiKey = key;
+            localStorage.setItem('dispenzaApiKey', key);
+            showModal("Sucesso", "Chave API salva localmente.");
+        }
+
+        function resetApp() {
+            showModal("Reset de Fábrica", "Isto apagará permanentemente seu histórico de progresso, anotações diárias e lembretes configurados. Esta ação não pode ser desfeita. Tem certeza?", "confirm", () => {
+                localStorage.removeItem('dispenzaState');
+                appState = JSON.parse(JSON.stringify(defaultState));
+                saveState();
+                renderReminders();
+                document.getElementById('change-counter').innerText = '0';
+                showModal("Reset Concluído", "O aplicativo foi restaurado para o Dia 0.");
+                navigate('home');
+            });
+        }
+
+        window.onload = () => {
+            updateDashboard();
+            renderReminders();
+            checkNotificationSupport();
+            
+            if(apiKey) document.getElementById('api-key-input').value = apiKey;
+        };
+
+    </script>
+</body>
+</html>
