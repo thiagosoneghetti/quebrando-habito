@@ -31,6 +31,7 @@
             color: #f8fafc;
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
+            overflow-y: auto; /* Libera a rolagem natural da página inteira */
         }
         .glass-panel {
             background: rgba(30, 41, 59, 0.7);
@@ -65,11 +66,12 @@
             height: 100dvh; 
             display: flex; 
             flex-direction: column;
+            position: relative;
         }
         /* Força a área de conteúdo a ocupar o espaço restante e rolar de forma isolada */
         #main-content { 
             flex: 1; 
-            padding-bottom: 140px; /* Aumenta a folga para o menu flutuante não cortar nada */
+            padding-bottom: 150px; /* Aumenta a folga para o menu flutuante não cortar nada */
         }
     </style>
 </head>
@@ -79,7 +81,7 @@
         
         <header class="p-5 glass-panel sticky top-0 z-20 flex justify-between items-center rounded-b-2xl">
             <div>
-                <h1 class="text-xl font-bold gradient-text">Quantum Mind 1.0</h1>
+                <h1 class="text-xl font-bold gradient-text">Quantum Mind 1.1</h1>
                 <p class="text-xs text-slate-400" id="header-subtitle">Quebrando o Hábito de Ser Você</p>
             </div>
             <button onclick="navigate('settings')" class="text-slate-400 hover:text-white transition">
